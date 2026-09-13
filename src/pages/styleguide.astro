@@ -1,0 +1,479 @@
+---
+import Base from '../layouts/Base.astro';
+import tokens from '../styles/tokens.css?raw';
+
+// Every value on this page is read from tokens.css when the site builds,
+// so the styleguide can't drift from the stylesheet.
+
+const colors = [
+  ...tokens.matchAll(/--color-([a-z-]+):\s*(#[0-9a-f]{6});\s*\/\*\s*(.+?)\s*\*\//gi),
+].map(([, name, value, role]) => ({ name, value, role }));
+
+const fluid = (prefix: string) =>
+  [
+    ...tokens.matchAll(
+      new RegExp(`--${prefix}-(-?[a-z0-9-]+):\\s*clamp\\(([\\d.]+)rem,[^,]+,\\s*([\\d.]+)rem\\)`, 'g'),
+    ),
+  ].map(([, name, min, max]) => ({
+    name,
+    range: `${(Number(min) * 16).toFixed(1)}–${(Number(max) * 16).toFixed(1)}px`,
+  }));
+
+const steps = fluid('step').reverse();
+const space = fluid('space');
+const radii = [...tokens.matchAll(/--radius-([a-z]+):\s*([\d.]+px);/g)].map(([, name, value]) => ({
+  name,
+  value,
+}));
+
+const stepUse: Record<string, string> = {
+  '6': 'the name on the homepage',
+  '5': 'h1',
+  '3': 'h2',
+  '2': 'h3',
+  '1': 'h4',
+  '0': 'body text',
+  '-1': 'margin notes, captions, the footer',
+};
+
+function luminance(hex: string) {
+  const [r, g, b] = [1, 3, 5].map((i) => {
+    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrast(a: string, b: string) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return `${((hi + 0.05) / (lo + 0.05)).toFixed(2)}:1`;
+}
+
+const bg = colors.find((c) => c.name === 'bg')?.value;
+const surface = colors.find((c) => c.name === 'surface')?.value;
+if (!bg || !surface) {
+  throw new Error('tokens.css must define --color-bg and --color-surface with a role comment');
+}
+const textColors = ['ink', 'ink-muted', 'accent'];
+const minus = (s: string) => s.replace('-', '−');
+
+const codeSample = `.noted {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-l-xl);
+}`;
+---
+
+<Base
+  title="Styleguide | Noah Kitayama"
+  description="The design system behind Noah Kitayama's site: colors, typefaces, type scale, spacing and page elements."
+  noindex
+>
+  <div class="flow page">
+    <h1>Styleguide</h1>
+    <p>
+      Every token and element the site is built from. If something here looks wrong after a change,
+      the design system broke. Search engines are told not to index this page.
+    </p>
+
+    <section class="flow" id="color">
+      <h2>Color</h2>
+      <p>
+        Six colors, one of them an accent. The values and ratios below are read from <code
+          >tokens.css</code
+        > and computed when the site builds, so this table can’t disagree with the stylesheet. Text needs
+        at least 4.5:1.
+      </p>
+      <div class="scroll" tabindex="0" role="region" aria-label="Color tokens">
+        <table>
+          <caption>Color tokens, with WCAG 2 contrast for the colors used as text</caption>
+          <thead>
+            <tr>
+              <th scope="col">Token</th>
+              <th scope="col">Value</th>
+              <th scope="col">Role</th>
+              <th scope="col">On bg</th>
+              <th scope="col">On surface</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              colors.map(({ name, value, role }) => (
+                <tr>
+                  <th scope="row">
+                    <span class="swatch" data-swatch={name} />
+                    <code>--color-{name}</code>
+                  </th>
+                  <td>{value}</td>
+                  <td>{role}</td>
+                  {textColors.includes(name) ? (
+                    <>
+                      <td>{contrast(value, bg)}</td>
+                      <td>{contrast(value, surface)}</td>
+                    </>
+                  ) : (
+                    <>
+                      <td>
+                        <span aria-hidden="true">—</span>
+                        <span class="visually-hidden">Not used for text</span>
+                      </td>
+                      <td>
+                        <span aria-hidden="true">—</span>
+                        <span class="visually-hidden">Not used for text</span>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="flow" id="typefaces">
+      <h2>Typefaces</h2>
+      <div class="noted">
+        <div>
+          <p class="specimen face-display">Switzer</p>
+          <p class="glyphs face-display">Il1 O0 0123456789</p>
+        </div>
+        <aside>
+          Semibold. By Jérémie Hornus for Indian Type Foundry, from Fontshare. Names, headings,
+          navigation and margin notes.
+        </aside>
+      </div>
+      <div class="noted">
+        <div>
+          <p class="specimen face-body">Source Serif 4</p>
+          <p class="glyphs face-body">Il1 O0 0123456789</p>
+        </div>
+        <aside>
+          Variable, weights 400 to 700. By Frank Grießhammer for Adobe, SIL Open Font License. Body
+          text.
+        </aside>
+      </div>
+      <p>
+        The display face names things and the body face carries the argument, so a glance tells a fact
+        from prose. The site is limited to two font files, so there is no italic and emphasis uses
+        weight instead.
+      </p>
+    </section>
+
+    <section class="flow" id="type-scale">
+      <h2>Type scale</h2>
+      <p>
+        Fluid sizes on the Utopia method: 16px on a 320px screen rising to 18px at 1280px, with the ratio
+        between steps growing from 1.2 to 1.333. No breakpoints.
+      </p>
+      {
+        steps.map(({ name, range }) => (
+          <div class="noted">
+            {/* Wrapped so --measure resolves at body size and every note lines up. */}
+            <div>
+              <p class="step" data-step={name}>
+                Step {minus(name)}
+              </p>
+            </div>
+            <aside>
+              {range}
+              {stepUse[name] && `: ${stepUse[name]}`}
+            </aside>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="flow" id="headings">
+      <h2>Headings</h2>
+      <p>
+        The h1 is this page’s title, and each section on this page opens with an h2. Headings are
+        sentence case and balanced across their lines.
+      </p>
+      <h3>A third-level heading, at step 2</h3>
+      <p>Text after a heading sits close to it, so the heading reads as part of what follows.</p>
+      <h4>A fourth-level heading, at step 1</h4>
+      <p>The site doesn’t go deeper than h4.</p>
+    </section>
+
+    <section class="flow" id="text">
+      <h2>Text</h2>
+      <p>
+        Body text is Source Serif 4 at step 0 with a line height of 1.7, and lines stop at 65
+        characters. <a href="#margin-notes">Links</a> use the accent color and keep their underline. <strong
+          >Strong text</strong
+        > is bold, and <em>emphasis</em> is a little heavier than body text, because there is no italic.
+        Inline code looks like <code>font-synthesis: none</code>.
+      </p>
+      <p>The accent color appears in four places:</p>
+      <ul>
+        <li>links</li>
+        <li>the keyboard focus ring</li>
+        <li>selected text</li>
+        <li>buttons</li>
+      </ul>
+      <p>Checking a change to the design system:</p>
+      <ol>
+        <li>Run <code>pnpm astro check</code>.</li>
+        <li>Run <code>pnpm build</code>.</li>
+        <li>Open this page at 320px and at 1920px wide.</li>
+      </ol>
+      <figure>
+        <blockquote>
+          <p>
+            Borders over shadows. A 1px hairline in a low-contrast color looks considered; a soft drop
+            shadow on every card looks generated.
+          </p>
+        </blockquote>
+        <figcaption>From <cite>docs/04-design-direction.md</cite>, the spec this site follows</figcaption>
+      </figure>
+      <pre tabindex="0"><code set:text={codeSample} /></pre>
+      <p>A rule marks a change of topic, and is never decoration:</p>
+      <hr />
+    </section>
+
+    <section class="flow" id="margin-notes">
+      <h2>Margin notes</h2>
+      <div class="noted">
+        <p>
+          The margin note is the site’s signature. Prose sits in the main column and a short fact sits
+          beside it, lined up with the first line, the way a textbook puts a definition next to the
+          paragraph that uses it. When the column gets too narrow for both, the note drops underneath
+          the paragraph instead. There is no breakpoint: the note wraps when the prose would fall below
+          two thirds of the row.
+        </p>
+        <aside>
+          This is a margin note, set in Switzer at step −1 in the muted ink color. <a href="#color"
+            >Links</a
+          > still use the accent.
+        </aside>
+      </div>
+    </section>
+
+    <section class="flow" id="space">
+      <h2>Space</h2>
+      <p>
+        A fluid scale on the same method as the type. A pair such as s-m grows from the first size on a
+        phone to the second on a laptop, for gaps that should open up more on wide screens.
+      </p>
+      <dl class="space-list">
+        {
+          space.map(({ name, range }) => (
+            <div>
+              <dt>
+                <code>--space-{name}</code>
+              </dt>
+              <dd>
+                <span class="bar" data-space={name} />
+                {range}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="flow" id="shape">
+      <h2>Shape and focus</h2>
+      <div class="noted">
+        <div class="shapes">
+          {radii.map(({ name }) => <span class="shape" data-radius={name} />)}
+        </div>
+        <aside>
+          Two radii: {radii.map(({ name, value }) => `${name} is ${value}`).join(', ')}. The small one is
+          for inline code and the focus ring, the larger one for code blocks and buttons. Layout blocks
+          stay square, and nothing has a shadow.
+        </aside>
+      </div>
+      <p>
+        Press Tab to move through the links, the scrolling table, the code block and the button on this
+        page. Each shows the same accent ring.
+      </p>
+      <p><button type="button">A button</button></p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .page > section {
+    --flow-space: var(--space-xl-2xl);
+  }
+
+  /* position: relative makes this the containing block for the
+     visually-hidden cells, so they can't widen the page past 320px. */
+  .scroll {
+    position: relative;
+    overflow-x: auto;
+  }
+
+  .swatch {
+    display: inline-block;
+    inline-size: var(--space-s);
+    block-size: var(--space-s);
+    margin-inline-end: var(--space-2xs);
+    border: var(--border-thin) solid var(--color-ink-muted);
+    vertical-align: middle;
+  }
+
+  [data-swatch='bg'] {
+    background-color: var(--color-bg);
+  }
+  [data-swatch='surface'] {
+    background-color: var(--color-surface);
+  }
+  [data-swatch='ink'] {
+    background-color: var(--color-ink);
+  }
+  [data-swatch='ink-muted'] {
+    background-color: var(--color-ink-muted);
+  }
+  [data-swatch='accent'] {
+    background-color: var(--color-accent);
+  }
+  [data-swatch='rule'] {
+    background-color: var(--color-rule);
+  }
+
+  th code {
+    white-space: nowrap;
+  }
+
+  .specimen {
+    font-size: var(--step-4);
+    line-height: var(--leading-tight);
+  }
+
+  .glyphs {
+    font-size: var(--step-1);
+    color: var(--color-ink-muted);
+  }
+
+  .face-display {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+  }
+
+  .face-body {
+    font-family: var(--font-body);
+  }
+
+  .step {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  [data-step='6'] {
+    font-size: var(--step-6);
+  }
+  [data-step='5'] {
+    font-size: var(--step-5);
+  }
+  [data-step='4'] {
+    font-size: var(--step-4);
+  }
+  [data-step='3'] {
+    font-size: var(--step-3);
+  }
+  [data-step='2'] {
+    font-size: var(--step-2);
+  }
+  [data-step='1'] {
+    font-size: var(--step-1);
+  }
+  [data-step='0'] {
+    font-size: var(--step-0);
+  }
+  [data-step='-1'] {
+    font-size: var(--step--1);
+  }
+
+  .space-list > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3xs) var(--space-s);
+  }
+
+  .space-list > div + div {
+    margin-block-start: var(--space-2xs);
+  }
+
+  .space-list dt {
+    flex: 0 0 var(--note-width);
+  }
+
+  .bar {
+    display: inline-block;
+    block-size: var(--space-xs);
+    margin-inline-end: var(--space-xs);
+    background-color: var(--color-ink-muted);
+    vertical-align: middle;
+  }
+
+  [data-space='3xs'] {
+    inline-size: var(--space-3xs);
+  }
+  [data-space='2xs'] {
+    inline-size: var(--space-2xs);
+  }
+  [data-space='xs'] {
+    inline-size: var(--space-xs);
+  }
+  [data-space='s'] {
+    inline-size: var(--space-s);
+  }
+  [data-space='m'] {
+    inline-size: var(--space-m);
+  }
+  [data-space='l'] {
+    inline-size: var(--space-l);
+  }
+  [data-space='xl'] {
+    inline-size: var(--space-xl);
+  }
+  [data-space='2xl'] {
+    inline-size: var(--space-2xl);
+  }
+  [data-space='3xl'] {
+    inline-size: var(--space-3xl);
+  }
+  [data-space='s-m'] {
+    inline-size: var(--space-s-m);
+  }
+  [data-space='m-l'] {
+    inline-size: var(--space-m-l);
+  }
+  [data-space='l-xl'] {
+    inline-size: var(--space-l-xl);
+  }
+  [data-space='xl-2xl'] {
+    inline-size: var(--space-xl-2xl);
+  }
+  [data-space='2xl-3xl'] {
+    inline-size: var(--space-2xl-3xl);
+  }
+
+  /* Empty boxes have no text baseline, so top-align them with the note. */
+  .shapes {
+    display: flex;
+    align-self: flex-start;
+    gap: var(--space-s);
+  }
+
+  .shape {
+    inline-size: var(--space-2xl);
+    block-size: var(--space-xl);
+    border: var(--border-thin) solid var(--color-rule);
+    background-color: var(--color-surface);
+  }
+
+  [data-radius='s'] {
+    border-radius: var(--radius-s);
+  }
+  [data-radius='m'] {
+    border-radius: var(--radius-m);
+  }
+</style>

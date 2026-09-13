@@ -1,12 +1,24 @@
 ---
 // Every <head> tag for the site lives here. See docs/03-system-design.md §2.
+import { Font } from 'astro:assets';
+
+// There is no favicon until Phase 6. The empty icon link stops browsers
+// requesting /favicon.ico and logging a 404 in the console.
+
 interface Props {
   title: string;
+  description: string;
+  noindex?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{title}</title>
+<meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex" />}
+<link rel="icon" href="data:," />
+<Font cssVariable="--font-switzer" preload />
+<Font cssVariable="--font-source-serif" preload />

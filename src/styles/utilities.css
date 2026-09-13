@@ -1,0 +1,61 @@
+/* A deliberately small set of utilities. Keep it under 20 classes. */
+
+.wrapper {
+  inline-size: min(100% - 2 * var(--gutter), var(--wrapper-max));
+  margin-inline: auto;
+}
+
+/* Vertical rhythm between siblings. --flow-space doesn't inherit, so a
+   value set on one element never leaks into nested .flow blocks. */
+@property --flow-space {
+  syntax: '*';
+  inherits: false;
+}
+
+.flow > * + * {
+  margin-block-start: var(--flow-space, var(--space-s));
+}
+
+.flow > :where(h2, h3, h4) {
+  --flow-space: var(--space-l-xl);
+}
+
+.flow > :where(h2, h3, h4) + * {
+  --flow-space: var(--space-xs);
+}
+
+.measure {
+  max-inline-size: var(--measure);
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-s);
+  padding: 0;
+  list-style: none;
+}
+
+.skip-link {
+  position: absolute;
+  inset-block-start: var(--space-xs);
+  inset-inline-start: var(--gutter);
+  padding: var(--space-2xs) var(--space-xs);
+  background-color: var(--color-bg);
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+}
+
+/* Standard accessible-hiding pattern; the 1px values are part of the
+   technique, not design sizes. */
+.visually-hidden,
+.skip-link:not(:focus) {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
