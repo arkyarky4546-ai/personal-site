@@ -134,14 +134,20 @@ The phase that decides whether this looks generated. Budget real time.
 - `ProjectCard.astro`
 - Featured projects surfaced on the homepage
 - Images via Astro's `<Image />`
+- **The deck** (decided at the end of Phase 2): projects are shown as a deck of cards. As you scroll, each card is dealt toward you and then laid on the table. CSS scroll-driven animation (`animation-timeline: view()`), no JavaScript, normal scrolling. Never hijack the scroll wheel. No dealer character: it would need real art, and stock or AI imagery is banned.
 
 **Acceptance:**
-- [ ] Adding a `.md` file to `src/content/projects/` makes a new page appear with **no other file edits**. Test this by actually doing it.
+- [ ] Adding a `.md` file to `src/content/projects/` makes a new page and a new card appear with **no other file edits**. Test this by actually doing it.
 - [ ] A malformed frontmatter field fails the build with a clear message
 - [ ] `/projects` looks intentional with exactly two entries — no empty grid cells, no filler
 - [ ] Every project page has a working repo link
 - [ ] Images have explicit dimensions; CLS is 0
 - [ ] Long project titles don't break the layout (test with a 90-character title)
+- [ ] Deck: without scroll-driven animation support (Firefox stable, as of September 2026) or with `prefers-reduced-motion: reduce`, every card is already laid out and fully readable, with no motion
+- [ ] Deck: each card is a real link, in reading order, reachable by keyboard with a visible focus ring
+- [ ] Deck: name, intro and resume link are still visible without scrolling at 375×667. The deck never gates them.
+- [ ] Deck: the laid-down cards look dealt (overlapping, varied), not a row of identical boxes
+- [ ] Deck: zero JavaScript added, and CLS stays 0
 
 **Criterion 1 is the one that determines whether this site is still current in a year.** Verify it properly.
 
