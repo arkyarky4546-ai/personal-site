@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://noah-kitayama.arkyarky4546.workers.dev',
   output: 'static',
   // URLs never end in a slash: /about, not /about/. Must match
   // assets.html_handling in wrangler.jsonc. See docs/03-system-design.md §3.
