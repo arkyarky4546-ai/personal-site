@@ -1,0 +1,7 @@
+# pnpm settings for this single-package repo (not a monorepo).
+# pnpm refuses to run dependency build scripts unless they're approved here.
+allowBuilds:
+  # native bundler binary used by Astro and Vite
+  esbuild: true
+  # Cloudflare's local runtime, used by `wrangler dev`
+  workerd: true

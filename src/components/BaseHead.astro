@@ -1,0 +1,12 @@
+---
+// Every <head> tag for the site lives here. See docs/03-system-design.md §2.
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
