@@ -161,12 +161,13 @@ The phase that decides whether this looks generated. Budget real time.
 - `/resume.pdf` in `public/`
 - Print stylesheet so the HTML page prints as a clean one-pager
 - `/about` with your real photo
+- **About and Resume buttons** (decided at the end of Phase 2): at the top right of the header on every page, including the homepage. They are links styled as buttons. The homepage has had no header since Phase 3; these buttons bring it back.
 
 **Acceptance:**
 - [ ] `/resume.pdf` returns 200 and the PDF is one page
 - [ ] `/resume` is readable on a phone without zooming
 - [ ] Ctrl-P on `/resume` produces a clean page with no nav, no footer, no URLs printed
-- [ ] Resume links from the header on every page
+- [ ] About and Resume buttons sit at the top right of the header on every page, including the homepage, reachable by keyboard with a visible focus ring
 - [ ] HTML and PDF contents agree
 - [ ] The about photo is optimized, under 100KB, with dimensions set
 
