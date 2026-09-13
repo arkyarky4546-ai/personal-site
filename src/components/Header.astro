@@ -1,13 +1,28 @@
 ---
 // Links only to pages that exist, so the live site never has a dead link.
 // Add a <nav> here when the second page ships.
-const isHome = Astro.url.pathname === '/';
+//
+// The homepage has no header for now: its h1 is the name, and there is
+// nothing else to put here yet. The About and Resume links will bring it back.
+// The route pattern, not the URL: with build.format 'file' the homepage's
+// URL is /index.html while it builds.
+const isHome = Astro.routePattern === '/';
 ---
 
-<a class="skip-link" href="#main">Skip to content</a>
-<header class="wrapper">
-  <a class="name" href="/" aria-current={isHome ? 'page' : undefined}>Noah Kitayama</a>
-</header>
+{
+  !isHome && (
+    <>
+      <a class="skip-link" href="#main">
+        Skip to content
+      </a>
+      <header class="wrapper">
+        <a class="name" href="/">
+          Noah Kitayama
+        </a>
+      </header>
+    </>
+  )
+}
 
 <style>
   header {

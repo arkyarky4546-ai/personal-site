@@ -211,9 +211,12 @@ button:hover {
 
 /*
   Margin notes, the site's signature layout. The first child is the prose;
-  an <aside> after it sits beside it in the margin, aligned to the first
+  the element after it sits beside it in the margin, aligned to the first
   line. When the prose would shrink below --noted-prose-min of the row, the
   note wraps underneath instead. No breakpoint needed.
+
+  The margin usually holds an <aside>, set small. The homepage puts its
+  list of links there instead.
 */
 .noted {
   display: flex;
@@ -228,9 +231,12 @@ button:hover {
   max-inline-size: var(--measure);
 }
 
-.noted > aside {
+.noted > :not(:first-child) {
   flex: 1 1 var(--note-width);
   max-inline-size: var(--note-max);
+}
+
+.noted > aside {
   font-family: var(--font-display);
   font-weight: var(--weight-display);
   font-size: var(--step--1);

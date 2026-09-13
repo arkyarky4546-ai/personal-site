@@ -1,5 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { links } from '../data/links';
+
+// Each <Placeholder> is text still to be written. Building main fails until
+// they're all replaced, so none can reach the live site.
 ---
 
 <Base
@@ -7,4 +12,75 @@ import Base from '../layouts/Base.astro';
   description="The personal site of Noah Kitayama, a computer science undergraduate."
 >
   <h1>Noah Kitayama</h1>
+
+  {/* The links sit in the margin beside the intro, and drop under it on a phone. */}
+  <div class="noted intro">
+    <p>
+      <Placeholder>
+        One sentence: your school, when you graduate, what you build, and the kind of role you’re
+        looking for.
+      </Placeholder>
+    </p>
+    <ul class="links" role="list">
+      {/* Once public/resume.pdf exists, this line becomes: <li><a href="/resume.pdf">Resume</a></li> */}
+      <li><Placeholder>Resume</Placeholder></li>
+      {
+        links.map(({ label, href }) => (
+          <li>
+            <a href={href}>{label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <section class="flow now">
+    <h2>What I’m working on now</h2>
+    <div class="noted">
+      <p>
+        <Placeholder>Two or three lines on what you’re building or studying right now.</Placeholder>
+      </p>
+      {/* Filled in, this reads: <aside>Updated <time datetime="2026-09">September 2026</time></aside> */}
+      <aside>Updated <Placeholder>month and year</Placeholder></aside>
+    </div>
+  </section>
 </Base>
+
+<style>
+  h1 {
+    padding-block-start: var(--space-l-xl);
+    font-size: var(--step-6);
+  }
+
+  .intro {
+    row-gap: var(--space-s);
+    margin-block-start: var(--space-s-m);
+  }
+
+  .intro p {
+    font-size: var(--step-1);
+    line-height: var(--leading-normal);
+  }
+
+  /* As wide as the longest link, so the email address never overflows the
+     margin. If the row can't fit it, the list drops under the intro. */
+  .intro > .links {
+    flex-basis: auto;
+  }
+
+  .links {
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    line-height: var(--leading-normal);
+  }
+
+  .links li + li {
+    margin-block-start: var(--space-3xs);
+  }
+
+  .now {
+    margin-block-start: var(--space-2xl-3xl);
+  }
+</style>

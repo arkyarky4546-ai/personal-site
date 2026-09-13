@@ -1,0 +1,24 @@
+---
+// Text Noah still has to write. It has a dashed underline so it's easy to
+// spot locally and on a PR preview.
+//
+// Workers Builds sets WORKERS_CI_BRANCH on every build. Building main fails
+// while any placeholder is left, so one can never reach the live site.
+if (import.meta.env.WORKERS_CI_BRANCH === 'main') {
+  const text = await Astro.slots.render('default');
+  throw new Error(
+    `${Astro.url.pathname} still has a placeholder: "${text.trim()}". Replace it with real content before merging to main.`,
+  );
+}
+---
+
+<span class="placeholder"><slot /></span>
+
+<style>
+  .placeholder {
+    background-color: var(--color-surface);
+    text-decoration: underline dashed var(--color-ink-muted);
+    text-decoration-thickness: var(--border-thin);
+    text-underline-offset: var(--underline-offset);
+  }
+</style>
