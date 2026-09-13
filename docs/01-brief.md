@@ -69,7 +69,7 @@ Testable. Check these before you call it done.
 | # | Criterion | How to check |
 |---|---|---|
 | 1 | Loads in under 1.5s on 4G | WebPageTest, mobile 4G profile |
-| 2 | Lighthouse ≥ 95 on all four categories | `npx lighthouse {{DOMAIN}} --view` |
+| 2 | Lighthouse ≥ 95 on all four categories | `npx lighthouse https://noah-kitayama.arkyarky4546.workers.dev --view` |
 | 3 | Zero layout shift | Lighthouse CLS = 0 |
 | 4 | Fully usable with keyboard only | Tab through every page, no traps, focus always visible |
 | 5 | Resume reachable in one click from any page | Manual check |

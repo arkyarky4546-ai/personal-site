@@ -117,7 +117,7 @@ URLs are a public contract. Once a recruiter has the link in an email thread, it
 | | Local | Preview | Production |
 |---|---|---|---|
 | Trigger | `pnpm dev` | Open a PR | Merge to `main` |
-| URL | `localhost:4321` | `<hash>.workers.dev` | `{{DOMAIN}}` or `*.workers.dev` |
+| URL | `localhost:4321` | `<version>-noah-kitayama.arkyarky4546.workers.dev` | `noah-kitayama.arkyarky4546.workers.dev` (or a custom domain later) |
 | Analytics | off | off | on |
 | Indexed by Google | — | **no** (`X-Robots-Tag: noindex`) | yes |
 
@@ -171,7 +171,7 @@ twitter:card = summary_large_image
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Noah Kitayama",
-  "url": "https://{{DOMAIN}}",
+  "url": "https://noah-kitayama.arkyarky4546.workers.dev",
   "sameAs": [
     "https://github.com/arkyarky4546-ai",
     "https://linkedin.com/in/..."
