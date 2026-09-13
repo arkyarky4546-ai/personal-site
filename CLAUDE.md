@@ -148,3 +148,4 @@ A change isn't done until:
 - **Push back.** If something in these docs is wrong, or if a request would make the site slower, less accessible, or harder to maintain, say so before building it.
 - **Don't over-abstract.** Six static pages. A component used once should probably be inline. Prefer duplication over the wrong abstraction.
 - **Ask rather than invent.** Missing content, an unclear metric, an ambiguous design call — ask. Never fill the gap with something plausible.
+- **Missing content Noah doesn't have yet becomes a placeholder.** Build with `<Placeholder>` and list it in `docs/placeholders.md`. A build of `main` fails while any placeholder is left.
