@@ -1,0 +1,99 @@
+---
+// One project card. Pages put each card in an <li> of a <ul class="deck">,
+// which lays the cards on the table and deals them (base.css).
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Todo from './Todo.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  /** 2 on /projects, under the page's h1. 3 on the homepage, under an h2. */
+  level: 2 | 3;
+}
+
+const { project, level } = Astro.props;
+const { title, summary, date, tech, cover } = project.data;
+const Heading = `h${level}` as const;
+---
+
+<article class="card">
+  {
+    cover && (
+      <Image
+        src={cover.src}
+        alt={cover.alt}
+        widths={[448, 896]}
+        sizes="(min-width: 32rem) 28rem, 100vw"
+      />
+    )
+  }
+  <Heading>
+    <a href={`/projects/${project.id}`}><Todo value={title} /></a>
+  </Heading>
+  <p><Todo value={summary} /></p>
+  <p class="meta">
+    {tech.join(', ')}<br /><Todo value={date} hint="month and year" />
+  </p>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    padding: var(--space-m);
+    /* The next card in the deck covers this extra padding, never the text. */
+    padding-block-end: calc(var(--space-m) + var(--deal-overlap));
+    border: var(--border-thin) solid var(--color-rule);
+    border-radius: var(--radius-l);
+    background-color: var(--color-bg);
+  }
+
+  .card > * + * {
+    margin-block-start: var(--space-2xs);
+  }
+
+  img {
+    margin-block-end: var(--space-xs);
+    border-radius: var(--radius-s);
+  }
+
+  h2,
+  h3 {
+    font-size: var(--step-2);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  /* The title link covers the whole card, so the card is one link and one tab stop. */
+  a {
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-l);
+  }
+
+  /* The ring goes round the card, not just the title. */
+  a:focus-visible {
+    outline: none;
+  }
+
+  a:focus-visible::after {
+    outline: var(--focus-width) solid var(--color-accent);
+    outline-offset: var(--focus-offset);
+  }
+
+  .meta {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: var(--step--1);
+    line-height: var(--leading-normal);
+    color: var(--color-ink-muted);
+  }
+</style>

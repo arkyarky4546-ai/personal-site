@@ -281,9 +281,9 @@ const codeSample = `.noted {
           {radii.map(({ name }) => <span class="shape" data-radius={name} />)}
         </div>
         <aside>
-          Two radii: {radii.map(({ name, value }) => `${name} is ${value}`).join(', ')}. The small one is
-          for inline code and the focus ring, the larger one for code blocks and buttons. Layout blocks
-          stay square, and nothing has a shadow.
+          Three radii: {radii.map(({ name, value }) => `${name} is ${value}`).join(', ')}. The small one
+          is for inline code and the focus ring, the middle one for code blocks and buttons, and the
+          large one for project cards. Layout blocks stay square, and nothing has a shadow.
         </aside>
       </div>
       <p>
@@ -475,5 +475,8 @@ const codeSample = `.noted {
   }
   [data-radius='m'] {
     border-radius: var(--radius-m);
+  }
+  [data-radius='l'] {
+    border-radius: var(--radius-l);
   }
 </style>

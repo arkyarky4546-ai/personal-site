@@ -1,0 +1,27 @@
+---
+// A value from a project's frontmatter. Until it's written, it shows as a
+// <Placeholder>: text that starts with "TODO:", or a date written as TODO.
+// See src/content.config.ts.
+import Placeholder from './Placeholder.astro';
+
+interface Props {
+  value: string | Date;
+  /** What a bare TODO stands for, such as "month and year" for a date. */
+  hint?: string;
+}
+
+const { value, hint = 'still to be written' } = Astro.props;
+const todo = typeof value === 'string' ? value.match(/^TODO(?::\s*(.*))?$/s) : null;
+---
+
+{
+  value instanceof Date ? (
+    <time datetime={value.toISOString().slice(0, 7)}>
+      {value.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' })}
+    </time>
+  ) : todo ? (
+    <Placeholder>{todo[1] || hint}</Placeholder>
+  ) : (
+    value
+  )
+}

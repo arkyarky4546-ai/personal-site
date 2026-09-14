@@ -1,12 +1,13 @@
 ---
 // Links only to pages that exist, so the live site never has a dead link.
-// Add a <nav> here when the second page ships.
+// Each phase adds its page to the nav when the page ships.
 //
 // The homepage has no header for now: its h1 is the name, and there is
 // nothing else to put here yet. The About and Resume links will bring it back.
 // The route pattern, not the URL: with build.format 'file' the homepage's
 // URL is /index.html while it builds.
 const isHome = Astro.routePattern === '/';
+const isProjects = Astro.routePattern === '/projects';
 ---
 
 {
@@ -19,6 +20,11 @@ const isHome = Astro.routePattern === '/';
         <a class="name" href="/">
           Noah Kitayama
         </a>
+        <nav aria-label="Site">
+          <a href="/projects" aria-current={isProjects ? 'page' : undefined}>
+            Projects
+          </a>
+        </nav>
       </header>
     </>
   )
@@ -26,13 +32,18 @@ const isHome = Astro.routePattern === '/';
 
 <style>
   header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-m);
     padding-block: var(--space-s-m);
-  }
-
-  .name {
     font-family: var(--font-display);
     font-weight: var(--weight-display);
     line-height: var(--leading-normal);
+  }
+
+  .name {
     color: var(--color-ink);
     text-decoration: none;
   }
@@ -40,5 +51,10 @@ const isHome = Astro.routePattern === '/';
   .name:hover {
     color: var(--color-accent);
     text-decoration: underline;
+  }
+
+  [aria-current='page'] {
+    color: var(--color-ink);
+    text-decoration: none;
   }
 </style>

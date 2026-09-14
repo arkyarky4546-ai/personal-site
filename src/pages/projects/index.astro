@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+// Newest first. A project whose date is still TODO goes last.
+const time = (date: Date | 'TODO') => (date === 'TODO' ? 0 : date.getTime());
+const projects = (await getCollection('projects')).sort(
+  (a, b) => time(b.data.date) - time(a.data.date),
+);
+---
+
+<Base
+  title="Projects | Noah Kitayama"
+  description="Projects by Noah Kitayama, a computer science undergraduate, each with a link to its source code."
+>
+  <h1>Projects</h1>
+  <ul class="deck" role="list">
+    {
+      projects.map((project) => (
+        <li>
+          <ProjectCard project={project} level={2} />
+        </li>
+      ))
+    }
+  </ul>
+</Base>
+
+<style>
+  .deck {
+    margin-block-start: var(--space-m-l);
+  }
+</style>

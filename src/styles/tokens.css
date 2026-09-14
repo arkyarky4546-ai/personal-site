@@ -73,6 +73,7 @@
   /* Shape. Borders, never shadows. */
   --radius-s: 2px;
   --radius-m: 6px;
+  --radius-l: 10px;
   --border-thin: 1px;
   --border-thick: 3px;
   --focus-width: 2px;
@@ -81,4 +82,20 @@
   /* Motion. Switched off under prefers-reduced-motion (reset.css). */
   --duration: 180ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* The project deck (.deck in base.css). Each card takes a tilt and a place
+     from its position. Place is the share of the spare width to its left. */
+  --card-width: 28rem;
+  --deal-overlap: var(--space-m);
+  --deal-tilt-1: -1.2deg;
+  --deal-tilt-2: 0.9deg;
+  --deal-tilt-3: -0.5deg;
+  --deal-tilt-4: 1.4deg;
+  --deal-place-1: 0.06;
+  --deal-place-2: 0.64;
+  --deal-place-3: 0.32;
+  /* Where a card starts as it's dealt: nearer, higher, and turned further. */
+  --deal-scale: 1.04;
+  --deal-lift: calc(-1 * var(--space-l));
+  --deal-spin: 3deg;
 }

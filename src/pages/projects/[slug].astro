@@ -1,0 +1,108 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import Todo from '../../components/Todo.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, summary, date, tech, repo, demo, cover } = project.data;
+const { Content } = await render(project);
+const hasWriteup = Boolean(project.body?.trim());
+
+// <title> and the meta description can't hold a placeholder, so they get the
+// text without its TODO: marker. The placeholders in the page still stop main building.
+const plain = (text: string) => text.replace(/^TODO:\s*/, '');
+---
+
+<Base title={`${plain(title)} | Noah Kitayama`} description={plain(summary)}>
+  <article>
+    <h1><Todo value={title} /></h1>
+
+    <div class="noted lede">
+      <p><Todo value={summary} /></p>
+      <aside>
+        <p><Todo value={date} hint="month and year" /></p>
+        <ul role="list">
+          {tech.map((item) => <li>{item}</li>)}
+        </ul>
+        <ul role="list">
+          <li><a href={repo}>Source code</a></li>
+          {demo && <li><a href={demo}>Live demo</a></li>}
+        </ul>
+      </aside>
+    </div>
+
+    {
+      cover && (
+        <Image
+          class="cover"
+          src={cover.src}
+          alt={cover.alt}
+          widths={[720, 1440]}
+          sizes="(min-width: 64rem) 60rem, 100vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+      )
+    }
+
+    {
+      hasWriteup ? (
+        <div class="flow writeup">
+          <Content />
+        </div>
+      ) : (
+        <p class="writeup">
+          <Placeholder>
+            The writeup, using the template in docs/05-content-and-copy.md §3: what it does, why
+            you built it, how it works, decisions and tradeoffs, what broke, what you’d do
+            differently, and the result.
+          </Placeholder>
+        </p>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .lede {
+    margin-block-start: var(--space-s-m);
+  }
+
+  .lede p {
+    font-size: var(--step-1);
+    line-height: var(--leading-normal);
+  }
+
+  .lede aside p {
+    font-size: inherit;
+  }
+
+  aside ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  aside > * + * {
+    margin-block-start: var(--space-2xs);
+  }
+
+  .cover {
+    margin-block-start: var(--space-l-xl);
+    border-radius: var(--radius-m);
+  }
+
+  .writeup {
+    margin-block-start: var(--space-xl-2xl);
+  }
+</style>

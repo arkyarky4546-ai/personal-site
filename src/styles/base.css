@@ -243,3 +243,80 @@ button:hover {
   line-height: var(--leading-normal);
   color: var(--color-ink-muted);
 }
+
+/*
+  The deck: project cards laid on a table, the surface color. Each card is
+  shifted along the row and tilted by an amount set by its position, and
+  overlaps the card before it only across that card's empty bottom padding.
+  Tilts repeat every 4 cards and places every 3, so the pattern repeats only
+  every 12. A later card lies on top, as if dealt later.
+
+  With .dealt (the homepage), each card is dealt as it scrolls into view.
+  Browsers without scroll-driven animation, and anyone who prefers reduced
+  motion, get the cards already laid down. The short animation-duration in
+  reset.css doesn't stop an animation driven by scrolling, so the media
+  query here does.
+*/
+.deck {
+  max-inline-size: none;
+  padding: var(--space-m-l) var(--space-s);
+  background-color: var(--color-surface);
+  list-style: none;
+}
+
+.deck > * {
+  position: relative;
+  max-inline-size: var(--card-width);
+  margin-inline-start: calc((100% - min(100%, var(--card-width))) * var(--deal-place));
+  rotate: var(--deal-tilt);
+}
+
+.deck > * + * {
+  margin-block-start: calc(-1 * var(--deal-overlap));
+}
+
+/* A focused card comes to the top, so nothing covers its focus ring. */
+.deck > :focus-within {
+  z-index: 1;
+}
+
+.deck > :nth-child(4n + 1) {
+  --deal-tilt: var(--deal-tilt-1);
+}
+.deck > :nth-child(4n + 2) {
+  --deal-tilt: var(--deal-tilt-2);
+}
+.deck > :nth-child(4n + 3) {
+  --deal-tilt: var(--deal-tilt-3);
+}
+.deck > :nth-child(4n + 4) {
+  --deal-tilt: var(--deal-tilt-4);
+}
+.deck > :nth-child(3n + 1) {
+  --deal-place: var(--deal-place-1);
+}
+.deck > :nth-child(3n + 2) {
+  --deal-place: var(--deal-place-2);
+}
+.deck > :nth-child(3n + 3) {
+  --deal-place: var(--deal-place-3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .deck.dealt > * {
+      animation: deal var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}
+
+/* No "to" keyframe: each card settles into its own resting place and tilt. */
+@keyframes deal {
+  from {
+    translate: 0 var(--deal-lift);
+    scale: var(--deal-scale);
+    rotate: calc(var(--deal-tilt) + var(--deal-spin));
+  }
+}

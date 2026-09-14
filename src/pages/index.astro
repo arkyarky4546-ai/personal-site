@@ -1,10 +1,18 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Placeholder from '../components/Placeholder.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import { links } from '../data/links';
 
 // Each <Placeholder> is text still to be written. Building main fails until
 // they're all replaced, so none can reach the live site.
+
+// Projects with featured: true, newest first, as on /projects.
+const time = (date: Date | 'TODO') => (date === 'TODO' ? 0 : date.getTime());
+const featured = (await getCollection('projects', ({ data }) => data.featured)).sort(
+  (a, b) => time(b.data.date) - time(a.data.date),
+);
 ---
 
 <Base
@@ -33,6 +41,21 @@ import { links } from '../data/links';
       }
     </ul>
   </div>
+
+  {/* The one moving thing on the site: the cards are dealt as they scroll in. */}
+  <section class="flow projects">
+    <h2>Projects</h2>
+    <ul class="deck dealt" role="list">
+      {
+        featured.map((project) => (
+          <li>
+            <ProjectCard project={project} level={3} />
+          </li>
+        ))
+      }
+    </ul>
+    <p><a href="/projects">All projects</a></p>
+  </section>
 
   <section class="flow now">
     <h2>What I’m working on now</h2>
@@ -80,7 +103,12 @@ import { links } from '../data/links';
     margin-block-start: var(--space-3xs);
   }
 
+  .projects,
   .now {
     margin-block-start: var(--space-2xl-3xl);
+  }
+
+  .projects > .deck {
+    --flow-space: var(--space-m-l);
   }
 </style>
