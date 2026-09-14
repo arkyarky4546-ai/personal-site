@@ -6,5 +6,5 @@ summary: "TODO: One sentence someone could repeat to a colleague."
 date: TODO
 tech: ["Python"]
 repo: "https://github.com/arkyarky4546-ai/MatasanoProblems"
-featured: true
+featured: false
 ---

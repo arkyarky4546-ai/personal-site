@@ -6,5 +6,5 @@ summary: "TODO: One sentence someone could repeat to a colleague. Your part: co-
 date: TODO
 tech: ["Java", "FTC SDK"]
 repo: "https://github.com/arkyarky4546-ai/TMI2026RoboticsCode"
-featured: true
+featured: false
 ---

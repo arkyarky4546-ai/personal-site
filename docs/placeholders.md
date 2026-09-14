@@ -60,7 +60,7 @@ Left out: `SomeOpenGLStuff` is an empty repo, so its link would lead nowhere.
 
 Still needed for all four: the title (the current one is a suggestion), the summary, the date and the writeup. The `tech` lists are the languages and tools each repo uses; change them if they're wrong.
 
-**Still to decide: which projects the homepage features.** Noah hasn't picked, so all four have `featured: true` for now. `05-content-and-copy.md` §2 suggests two or three; set the rest to `featured: false`.
+**On the homepage:** Noah chose to feature only Chordially (`featured: true`). The other three are on `/projects` only.
 
 ## Phase 5: resume and About
 
